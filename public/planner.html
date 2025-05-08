@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Планер задач</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body class="planner-page">
+    <header class="app-header">
+      <div class="container">
+        <h1>Планер завдань</h1>
+        <nav>
+          <button id="logoutBtn" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Вийти
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="tasks-section">
+        <h2><i class="fas fa-tasks"></i> Перелік задач</h2>
+
+        <div class="tasks-container">
+          <ul id="tasksList" class="tasks-list">
+            <li id="emptyList" class="empty-list">
+              <img src="./img/leaf.svg" alt="Empty" width="48" />
+              <div class="empty-list__title">Список порожній</div>
+              <p class="empty-list__text">Додайте свою першу задачу</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="add-task-section">
+        <div class="add-task-card">
+          <h3><i class="fas fa-plus-circle"></i> Додати завдання</h3>
+          <form id="form" class="task-form">
+            <div class="form-group">
+              <label for="taskTitle">Назва задачі</label>
+              <input
+                type="text"
+                id="taskTitle"
+                placeholder="Що потрібно зробити?"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="taskDescription">Опис</label>
+              <textarea
+                id="taskDescription"
+                placeholder="Детальніше про задачу (необов'язково)"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="taskDeadline">Крайній термін</label>
+                <input type="date" id="taskDeadline" />
+              </div>
+
+              <div class="form-group">
+                <label for="taskCategory">Категорія</label>
+                <select id="taskCategory">
+                  <option value="Загальне">Загальне</option>
+                  <option value="Навчання">Навчання</option>
+                  <option value="Робота">Робота</option>
+                  <option value="Особисте">Особисте</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-plus"></i> Додати задачу
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section class="quote-section">
+        <div class="quote-card">
+          <h4><i class="fas fa-quote-left"></i> Цитата дня</h4>
+          <p id="quoteText" class="quote-text">
+            Натисніть кнопку, щоб отримати натхнення!
+          </p>
+          <button id="quoteBtn" class="btn-secondary">
+            <i class="fas fa-sync-alt"></i> Нова цитата
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="js/planner.js"></script>
+  </body>
+</html>

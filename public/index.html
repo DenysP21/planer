@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Авторизація | Планер задач</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="auth-page">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1>Ласкаво просимо до <span>Планера задач</span></h1>
+        <p>Організуйте своє життя легко та зручно</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Увійти</button>
+        <button class="auth-tab" data-tab="register">Реєстрація</button>
+      </div>
+
+      <div class="auth-forms">
+        <section id="loginSection" class="auth-form active">
+          <form id="loginForm" class="form">
+            <div class="form-group">
+              <input type="email" name="email" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                name="password"
+                placeholder="Пароль"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-primary">Увійти</button>
+          </form>
+          <p id="loginMessage" class="auth-message"></p>
+        </section>
+
+        <section id="registerSection" class="auth-form">
+          <form id="registerForm" class="form">
+            <div class="form-group">
+              <input type="email" name="email" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                name="password"
+                placeholder="Пароль"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-primary">Зареєструватися</button>
+          </form>
+          <p id="registerMessage" class="auth-message"></p>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+  </body>
+</html>
