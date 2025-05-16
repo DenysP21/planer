@@ -3,67 +3,81 @@ const fs = require("fs");
 const path = require("path");
 const handleAuthRoutes = require("./routes/authRoutes");
 
-const server = http.createServer((req, res) => {
-  if (
-    req.url.startsWith("/img/") ||
-    req.url.startsWith("/css/") ||
-    req.url.startsWith("/js/")
-  ) {
-    const filePath = path.join(__dirname, "..", "public", req.url);
-    const ext = path.extname(filePath);
-    let contentType = "text/plain";
+const CONTENT_TYPES = {
+  ".html": "text/html",
+  ".css": "text/css",
+  ".js": "text/javascript",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".json": "application/json",
+};
 
-    if (ext === ".png") contentType = "image/png";
-    else if (ext === ".svg") contentType = "image/svg+xml";
-    else if (ext === ".jpg" || ext === ".jpeg") contentType = "image/jpeg";
-    else if (ext === ".css") contentType = "text/css";
-    else if (ext === ".js") contentType = "text/javascript";
+const server = http.createServer(async (req, res) => {
+  try {
+    if (
+      req.method === "GET" &&
+      (req.url.startsWith("/img/") ||
+        req.url.startsWith("/css/") ||
+        req.url.startsWith("/js/"))
+    ) {
+      const filePath = path.join(__dirname, "..", "public", req.url);
+      const ext = path.extname(filePath).toLowerCase();
+      const contentType = CONTENT_TYPES[ext] || "text/plain";
 
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        res.writeHead(404);
-        res.end("Not Found");
-      } else {
-        res.writeHead(200, { "Content-Type": contentType });
-        res.end(data);
-      }
-    });
-    return;
-  }
-  if (handleAuthRoutes(req, res)) return;
-
-  let filePath;
-  if (req.url === "/") {
-    filePath = path.join(__dirname, "../public/index.html");
-  } else if (req.url === "/planner.html") {
-    filePath = path.join(__dirname, "../public/planner.html");
-  } else {
-    filePath = path.join(__dirname, "../public", req.url);
-  }
-
-  const ext = path.extname(filePath);
-  let contentType = "text/html";
-  if (ext === ".js") contentType = "text/javascript";
-  else if (ext === ".css") contentType = "text/css";
-
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (err) {
-      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Файл не знайдено");
+      await sendFile(res, filePath, contentType);
       return;
     }
 
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end("Помилка сервера");
+    const isHandled = await handleAuthRoutes(req, res);
+    if (isHandled) return;
+
+    if (req.method === "GET") {
+      let filePath;
+      if (req.url === "/") {
+        filePath = path.join(__dirname, "../public/index.html");
+      } else if (req.url === "/planner.html") {
+        filePath = path.join(__dirname, "../public/planner.html");
       } else {
-        res.writeHead(200, { "Content-Type": contentType });
-        res.end(data);
+        filePath = path.join(__dirname, "../public", req.url);
       }
-    });
-  });
+
+      const ext = path.extname(filePath).toLowerCase();
+      const contentType = CONTENT_TYPES[ext] || "text/html";
+
+      await sendFile(res, filePath, contentType);
+    } else {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("Маршрут не знайдено");
+    }
+  } catch (error) {
+    console.error(error);
+    if (!res.headersSent) {
+      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Внутрішня помилка сервера");
+    }
+  }
 });
+
+async function sendFile(res, filePath, contentType) {
+  try {
+    await fs.promises.access(filePath, fs.constants.F_OK);
+    const data = await fs.promises.readFile(filePath);
+    res.writeHead(200, {
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=3600",
+    });
+    res.end(data);
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Файл не знайдено");
+    } else {
+      throw err;
+    }
+  }
+}
 
 server.listen(3000, () => {
   console.log("Сервер працює на http://localhost:3000");
